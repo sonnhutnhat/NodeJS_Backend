@@ -1,3 +1,4 @@
+import { where } from 'sequelize';
 import db from '../models/index'
 import bcrypt from 'bcryptjs';
 const salt = bcrypt.genSaltSync(10);
@@ -247,6 +248,33 @@ let deleteUser = (userId) => {
     });
 }
 
+let getAllCodeService = (typeInput) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!typeInput) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Missing required parameters'
+                })
+            } else {
+                let res = {}; // Tạo một đối tượng tạm để chứa kết quả
+                let allcode = await db.Allcode.findAll({
+                    where: { type: typeInput }
+                }); // Lấy dữ liệu từ DB
+                res.errCode = 0;
+                res.data = allcode;
+                resolve(res); // Trả về đối tượng 'res' đã tạo
+            }
+        } catch (e) {
+            reject(e); // Nếu có lỗi, trả về reject
+        }
+    });
+}
+
+
+
+
+
 module.exports = {
     handleUserLogin: handleUserLogin,
     checkUserEmail: checkUserEmail,
@@ -254,4 +282,5 @@ module.exports = {
     createNewUser: createNewUser,
     deleteUser: deleteUser,
     updateUser: updateUser,
+    getAllCodeService: getAllCodeService,
 }
